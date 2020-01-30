@@ -11,6 +11,10 @@
 
 
 <style>
+
+  body{
+    background-color: '#fbfbfb';
+  }
 #svgContainer{
     height: 100%;
     width: 100%;
@@ -23,6 +27,18 @@
 <script src="https://d3js.org/d3-drag.v1.min.js"></script>
 
 <script>
+  
+
+const getLastCoords = (element) => {
+  const y = element.previousElementSibling.getAttribute('y');
+
+  if(y){
+    return Number(y) + 28;
+  }
+  return 32;
+
+}
+
 const body = d3.select('#container');
 const svg = body.append("svg").attr('id', 'svgContainer')
 
@@ -36,15 +52,19 @@ const data = [
         color: '#316896'
       }],
       columns:[
-       {
+      {
         name: 'text',
         type: 'String'
-        } 
+        },
+        {
+        name: 'text',
+        type: 'String'
+        },
       ]
     },
     {
       x: 10, 
-      y: 80,
+      y: 150,
       header:[{
         title: 'Header 2',
         color: '#316896'
@@ -53,9 +73,17 @@ const data = [
        {
         name: 'text',
         type: 'String'
+        },
+        {
+        name: 'text',
+        type: 'String'
+        },
+        {
+        name: 'text',
+        type: 'String'
         } 
       ]
-    },
+    }
 ]
 
 const table = svg.selectAll('svg')
@@ -65,51 +93,49 @@ const table = svg.selectAll('svg')
 .attr('x', (d) => d.x)
 .attr('y', (d) => d.y)
 .attr('width', '150')
-.attr('height', '80')
 .attr('class', 'table')
 
 
-const header = table.selectAll('svg').data((d)=>d.header).enter().append('svg')
+const header = table.selectAll('tableHeader').data((d)=>d.header).enter().append('svg')
 .attr('height', '32')
 .attr('class', 'tableHeader')
 
-
-const headerRect = header.selectAll('rect').data((d) => [d.color]).enter().append('rect')
+header.append('rect')
 .attr('width', '100%')
 .attr('height', '32')
 .attr('fill', '#316896')
 
-const headerText = header.selectAll('text').data((d)=>[d.title]).enter().append('text')
-.text((d) => d)
+header.append('text')
+.text((d) => d.title)
 .attr('x', 13)
 .attr('y', 16)
 .attr('dy', '.35em')
 .attr('fill', 'white')
 
-const headerTitle = header.selectAll('title').data((d)=>[d.title]).enter().append('title')
-.text((d) => d)
+header.append('title').text((d) => d.title)
 
 
-const column = table.selectAll('svg').data((d)=> d.columns).enter().append('svg')
-.attr('height', '28')
+const columns = table.selectAll('tableField').data((d)=>d.columns).enter().append('svg')
+.attr('y', function(d){return getLastCoords(this)})
+.attr('height', '32')
 .attr('class', 'tableField')
 
+columns.append('rect')
+.attr('width', '100%')
+.attr('height', '32')
+.attr('fill', '#f6f6f6')
+.attr('stroke', 'black')
 
-// const columnRect = column.selectAll('rect').data((d) => [d.color]).enter().append('rect')
-// .attr('width', '100%')
-// .attr('height', '32')
-// .attr('fill', '#316896')
-
-// const columnText = column.selectAll('text').data((d)=>[d.title]).enter().append('text')
-// .text((d) => d)
-// .attr('x', 13)
-// .attr('y', 16)
-// .attr('dy', '.35em')
-// .attr('fill', 'white')
+columns.append('text')
+.text('test')
+.attr('x', 13)
+.attr('y', 16)
+.attr('dy', '.35em')
+.attr('fill', 'black')
 
 
 function started() {
-  var node = d3.select(this).classed("dragging", true);
+  const node = d3.select(this).classed("dragging", true);
 
   d3.event.on("drag", dragged).on("end", ended);
 
@@ -123,6 +149,7 @@ function started() {
 }
 
 d3.selectAll(".table").call(d3.drag().on("start", started));
+
 
 </script>
 </html>
